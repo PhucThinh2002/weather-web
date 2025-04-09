@@ -8,14 +8,16 @@
 }
 
 body {
-  /* position: relative; */
-  height: 100vh;
+  min-height: 100vh; /* Thay vì height */
+  overflow-x: hidden; /* Chỉ chặn scroll ngang nếu cần */
+  overflow-y: auto; /* Cho phép scroll dọc */
+  margin: 0;
+  padding: 20px;
   background-image: radial-gradient(
     circle 382px at 50% 50.2%,
     rgb(129, 203, 239) 0.1%,
     rgb(45, 171, 243) 100.2%
   );
-  overflow: hidden;
 }
 
 @keyframes slide-up {

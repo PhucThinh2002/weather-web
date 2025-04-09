@@ -1,224 +1,136 @@
 import React, { useState, useEffect } from "react";
 import "./Dashboard.css";
+import { useSelector, useDispatch } from "react-redux";
 import { getWeatherData } from "../../features/weatherAPI";
-import Compass from "../../assets/compass.png";
-import Drops from "../../assets/drops.png";
-import Rain from "../../assets/rain.png";
-import Ultraviolet from "../../assets/ultraviolet.png";
-import PartlySunny from "../../assets/partly-sunny.png";
-import sunCloudy from "../../assets/sun-cloudy.png";
+import WeatherIcon from "../WeatherIcon/WeatherIcon";
 
 const Dashboard = ({ searchCountry }) => {
-  const [weather, setWeather] = useState(null); // Dữ liệu thời tiết hiện tại
-  const [otherCities, setOtherCities] = useState([]); // Danh sách các thành phố khác
+  const [weather, setWeather] = useState(null);
+  const [otherCities, setOtherCities] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+  const savedLocations = useSelector(state => state.locations);
+
+  // Hàm lấy danh sách thành phố ngẫu nhiên
+  const getRandomCities = () => {
+    const cities = ["Paris", "Tokyo", "New York", "London", "Berlin", "Sydney", 
+                   "Dubai", "Singapore", "Moscow", "Beijing"];
+    return [...cities].sort(() => 0.5 - Math.random()).slice(0, 4);
+  };
 
   useEffect(() => {
-    const fetchWeatherData = async () => {
+    const fetchData = async () => {
       try {
-        const country = searchCountry || "auto:ip"; // Nếu không tìm kiếm, lấy vị trí hiện tại
-        const data = await getWeatherData(country);
-        setWeather(data);
+        setLoading(true);
+        // Lấy thời tiết vị trí hiện tại hoặc vị trí tìm kiếm
+        const currentLocation = searchCountry || "auto:ip";
+        const currentData = await getWeatherData(currentLocation);
+        setWeather(currentData);
 
-        // Lấy dữ liệu cho các thành phố ngẫu nhiên
-        const randomCities = ["France", "Japan", "USA", "China"];
-        const promises = randomCities.map((city) => getWeatherData(city));
-        const results = await Promise.all(promises);
-        setOtherCities(results);
-      } catch (error) {
-        console.error("Lỗi khi lấy dữ liệu thời tiết:", error);
+        // Lấy thời tiết các thành phố ngẫu nhiên
+        const randomCities = savedLocations.length > 0 
+          ? savedLocations.map(loc => loc.name)
+          : getRandomCities();
+        
+        const citiesData = await Promise.all(
+          randomCities.map(city => getWeatherData(city).catch(e => null))
+        );
+        
+        setOtherCities(citiesData.filter(Boolean));
+        setError(null);
+      } catch (err) {
+        setError("Failed to fetch weather data");
+        console.error(err);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchWeatherData();
-  }, [searchCountry]); // Chạy lại khi `searchCountry` thay đổi
+    fetchData();
+  }, [searchCountry, savedLocations]);
 
-
-  const formatDate = (daysToAdd = 0) => {
-    const date = new Date();
-    date.setDate(date.getDate() + daysToAdd);
-    return date.toLocaleDateString("en-US", { weekday: "long" });
-  };
+  if (loading) return <div className="loading">Loading...</div>;
+  if (error) return <div className="error">{error}</div>;
 
   return (
-    <section className="dashboard-section">
-      {/* Vị trí hiện tại */}
-      <div className="home">
-        <div className="feed-1">
-          <div className="feeds">
-            {weather ? (
-              <>
-                <img
-                  src={`https:${weather?.current?.condition?.icon || ""}`}
-                  alt="Weather Icon"
-                />
-
-                <div>
-                  <div>
-                    <span>{weather.location.country}</span>
-                    <span>{weather.current.condition.text}</span>
-                  </div>
-                  <div>
-                    <span>
-                      {weather.current.temp_c} <sup>o</sup>C
-                    </span>
-                  </div>
-                </div>
-              </>
-            ) : (
-              <span>Đang tải thông tin thời tiết...</span>
-            )}
-          </div>
-          <div className="feed">
-            <div>
-              <div>
-                <img
-                  src={`https:${weather?.forecast?.forecastday?.[0]?.day?.condition?.icon || ""}`}
-                  alt="Weather Icon"
-                />
-                <span>
-                  {weather?.forecast?.forecastday?.[0]?.day?.avgtemp_c || "--"}{" "}
-                  <sup>o</sup>C
-                </span>
-              </div>
-              <div>
-                <span>{formatDate(0)}</span>
-              </div>
-            </div>
-            <div>
-              <div>
-                <img
-                  src={`https:${weather?.forecast?.forecastday?.[1]?.day?.condition?.icon || ""}`}
-                  alt="Weather Icon"
-                />
-                <span>
-                  {weather?.forecast?.forecastday?.[1]?.day?.avgtemp_c || "--"}{" "}
-                  <sup>o</sup>C
-                </span>
-              </div>
-              <div>
-                <span>{formatDate(1)}</span>
-              </div>
-            </div>
+    <div className="dashboard-container">
+      {/* Current Weather */}
+      <div className="current-weather">
+        <div className="location-info">
+          <h2>{weather?.location?.name}, {weather?.location?.country}</h2>
+          <p>{new Date(weather?.location?.localtime).toLocaleDateString('en-US', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          })}</p>
+        </div>
+        
+        <div className="weather-main">
+          <WeatherIcon condition={weather?.current?.condition?.text} />
+          <div className="temperature">
+            <span>{weather?.current?.temp_c}°C</span>
+            <p>{weather?.current?.condition?.text}</p>
           </div>
         </div>
-
-        {/* Today's Highlights */}
-        <div className="highlights">
-          <h2>Today's Highlights</h2>
-          <div className="all-highlights">
-            <div>
-              <div>
-                <img src={Compass} alt="Feel Like" />
-                <div>
-                  <span>Feel Like</span>
-                  <span>
-                    {weather?.current?.feelslike_c || "Normal"} <sup>o</sup>C
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div>
-              <div>
-                <img src={sunCloudy} alt="Cloud" />
-                <div>
-                  <span>Cloud</span>
-                  <span>{weather?.current?.condition?.text || "Heave"}</span>
-                </div>
-              </div>
-              <div>
-                <span>
-                  {weather?.current?.cloud || "--"} <sup>%</sup>
-                </span>
-              </div>
-            </div>
-            <div>
-              <div>
-                <img src={Rain} alt="Rain" />
-                <div>
-                  <span>Rain</span>
-                  <span>
-                    {weather?.forecast?.forecastday?.[0]?.day?.daily_chance_of_rain || "Normal"}%
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div>
-              <div>
-                <img src={Drops} alt="Humidity" />
-                <div>
-                  <span>Humidity</span>
-                  <span>
-                    {weather?.current?.humidity || "Heavy"}%
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div>
-              <div>
-                <img src={Ultraviolet} alt="Ultraviolet" />
-                <div>
-                  <span>Ultraviolet</span>
-                  <span>
-                    {weather?.current?.uv || "Heavy"}
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div>
-              <div>
-                <img src={PartlySunny} alt="Wind" />
-                <div>
-                  <span>Wind</span>
-                  <span>
-                    {weather?.current?.wind_kph || "Normal"} km/h
-                  </span>
-                </div>
-              </div>
-            </div>
+        
+        <div className="weather-details">
+          <div className="detail-item">
+            <span>Feels Like</span>
+            <span>{weather?.current?.feelslike_c}°C</span>
+          </div>
+          <div className="detail-item">
+            <span>Humidity</span>
+            <span>{weather?.current?.humidity}%</span>
+          </div>
+          <div className="detail-item">
+            <span>Wind</span>
+            <span>{weather?.current?.wind_kph} km/h</span>
+          </div>
+          <div className="detail-item">
+            <span>UV Index</span>
+            <span>{weather?.current?.uv}</span>
           </div>
         </div>
       </div>
-
-
-
-      {/* Other Cities */}
-      <div className="cities">
-        <h2>Other Countries</h2>
-        <div className="all-cities">
-          {otherCities.length > 0 ? (
-            otherCities.map((cityWeather, index) => (
-              <div key={index}>
-                <div>
-                  <img
-                    src={`https:${cityWeather?.current?.condition?.icon || ""}`}
-                    alt={`${cityWeather?.location?.country || "Unknown"} Weather Icon`}
-                  />
-                  <div>
-                    <span>{cityWeather?.location?.country || "Unknown"}</span>
-                    <span>
-                      {cityWeather?.current?.condition?.text}. High:{" "}
-                      {cityWeather?.forecast?.forecastday?.[0]?.day?.maxtemp_c || "--"}° Low:{" "}
-                      {cityWeather?.forecast?.forecastday?.[0]?.day?.mintemp_c || "--"}°
-                    </span>
-                  </div>
-                </div>
-                <div>
-                  <span>{cityWeather?.current?.temp_c || "--"} <sup>o</sup>C</span>
-                </div>
+      
+      {/* Forecast */}
+      <div className="forecast">
+        <h3>3-Day Forecast</h3>
+        <div className="forecast-items">
+          {weather?.forecast?.forecastday?.map((day, index) => (
+            <div key={index} className="forecast-item">
+              <p>{new Date(day.date).toLocaleDateString('en-US', { weekday: 'short' })}</p>
+              <WeatherIcon condition={day.day.condition.text} small />
+              <div className="temps">
+                <span className="max-temp">{day.day.maxtemp_c}°</span>
+                <span className="min-temp">{day.day.mintemp_c}°</span>
               </div>
-            ))
-          ) : (
-            <p>Đang tải dữ liệu thành phố...</p>
-          )}
-
+            </div>
+          ))}
         </div>
-        <button className="button">
-          <span>See More</span>
-          <ion-icon name="arrow-forward-outline"></ion-icon>
-        </button>
-
       </div>
-    </section>
+      
+      {/* Other Locations */}
+      <div className="other-locations">
+        <h3>Other Locations</h3>
+        <div className="location-cards">
+          {otherCities.map((city, index) => (
+            city && (
+              <div key={index} className="location-card">
+                <h4>{city.location.name}, {city.location.country}</h4>
+                <div className="card-content">
+                  <WeatherIcon condition={city.current.condition.text} small />
+                  <span>{city.current.temp_c}°C</span>
+                </div>
+                <p>{city.current.condition.text}</p>
+              </div>
+            )
+          ))}
+        </div>
+      </div>
+    </div>
   );
 };
 

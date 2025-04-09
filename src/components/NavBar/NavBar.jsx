@@ -1,46 +1,77 @@
-import React from "react";
+import React, { useState } from "react";
 import "./NavBar.css";
-import logo from "../../assets/logo.png";
+import { useDispatch, useSelector } from "react-redux";
+import { removeLocation } from "../../features/locationsSlice";
 
-const NavBar = () => {
+const NavBar = ({ onLocationSelect }) => {
+  const [activeItem, setActiveItem] = useState("Home");
+  const dispatch = useDispatch();
+  const savedLocations = useSelector(state => state.locations);
+
+  const handleItemClick = (item) => {
+    setActiveItem(item);
+    if (item === "Home") {
+      onLocationSelect("auto:ip");
+    }
+  };
+
+  const handleRemoveLocation = (id, e) => {
+    e.stopPropagation();
+    dispatch(removeLocation(id));
+  };
+
   return (
-    <section className="nav-section">
-      <nav>
-        <img src={logo} alt="" />
-        <ul>
-          <li>
-            <ion-icon name="home-outline"></ion-icon>
-            <span>Home</span>
+    <nav className="navbar">
+      <div className="logo">
+        <ion-icon name="partly-sunny-outline"></ion-icon>
+        <span>Weather</span>
+      </div>
+      
+      <ul className="nav-menu">
+        <li 
+          className={activeItem === "Home" ? "active" : ""}
+          onClick={() => handleItemClick("Home")}
+        >
+          <ion-icon name="home-outline"></ion-icon>
+          <span>Home</span>
+        </li>
+        
+        <li 
+          className={activeItem === "Map" ? "active" : ""}
+          onClick={() => handleItemClick("Map")}
+        >
+          <ion-icon name="map-outline"></ion-icon>
+          <span>Map</span>
+        </li>
+        
+        <li className="divider"></li>
+        
+        <h4>Saved Locations</h4>
+        
+        {savedLocations.map(location => (
+          <li 
+            key={location.id}
+            onClick={() => onLocationSelect(location.name)}
+          >
+            <ion-icon name="location-outline"></ion-icon>
+            <span>{location.name}</span>
+            <button 
+              className="remove-btn"
+              onClick={(e) => handleRemoveLocation(location.id, e)}
+            >
+              <ion-icon name="close-outline"></ion-icon>
+            </button>
           </li>
-          <li>
-            <ion-icon name="newspaper-outline"></ion-icon>
-            <span>Blogs</span>
-          </li>
-          <li>
-            <ion-icon name="locate-outline"></ion-icon>
-            <span>Map</span>
-          </li>
-          <li>
-            <ion-icon name="camera-outline"></ion-icon>
-            <span>Photos</span>
-          </li>
-          <li>
-            <ion-icon name="videocam-outline"></ion-icon>
-            <span>Videos</span>
-          </li>
-          <li>
-            <ion-icon name="call-outline"></ion-icon>
-            <span>Phone</span>
-          </li>
-        </ul>
-        <ul>
-          <li>
-            <ion-icon name="log-out-outline"></ion-icon>
-            <span>Log out</span>
-          </li>
-        </ul>
-      </nav>
-    </section>
+        ))}
+      </ul>
+      
+      <div className="nav-footer">
+        <button className="logout-btn">
+          <ion-icon name="log-out-outline"></ion-icon>
+          <span>Logout</span>
+        </button>
+      </div>
+    </nav>
   );
 };
 

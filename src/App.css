@@ -1,0 +1,16 @@
+/* App.css */
+main {
+  margin-left: 250px;
+  min-height: calc(100vh - 100px); /* Trừ header */
+  overflow-y: auto;
+  }
+  
+  main.nav-open {
+    margin-left: 0;
+  }
+  
+  @media (min-width: 992px) {
+    main.nav-open {
+      margin-left: 250px;
+    }
+  }
