@@ -26,4 +26,4 @@
 
 
 ### Màn hình
-    ![Weather](src/assets/weatherweb.png)
+    **![Weather](src/assets/weatherweb.png)**
