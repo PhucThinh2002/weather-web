@@ -56,7 +56,7 @@ const Dashboard = ({ searchCountry }) => {
   return (
     <div className="dashboard-container">
       {/* Current Weather */}
-      <div className="current-weather">
+      <div className="current-weather dashboard-section">
         <div className="location-info">
           <h2>{weather?.location?.name}, {weather?.location?.country}</h2>
           <p>{new Date(weather?.location?.localtime).toLocaleDateString('en-US', { 
@@ -96,7 +96,7 @@ const Dashboard = ({ searchCountry }) => {
       </div>
       
       {/* Forecast */}
-      <div className="forecast">
+      <div className="forecast dashboard-section">
         <h3>3-Day Forecast</h3>
         <div className="forecast-items">
           {weather?.forecast?.forecastday?.map((day, index) => (
@@ -111,9 +111,32 @@ const Dashboard = ({ searchCountry }) => {
           ))}
         </div>
       </div>
-      
+      {/* Forecast
+<div className="forecast dashboard-section">
+  <h3>7-Day Forecast</h3>
+  <div className="forecast-scroll-wrapper">
+    <div className="forecast-items scrollable-row">
+      {weather?.forecast?.forecastday?.map((day, index) => (
+        <div key={index} className="forecast-item">
+          <p className="forecast-date">
+            {new Date(day.date).toLocaleDateString("en-US", {
+              weekday: "short",
+              month: "short",
+              day: "numeric",
+            })}
+          </p>
+          <WeatherIcon condition={day.day.condition.text} small />
+          <div className="temps">
+            <span className="max-temp">{day.day.maxtemp_c}°</span>
+            <span className="min-temp">{day.day.mintemp_c}°</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</div> */}
       {/* Other Locations */}
-      <div className="other-locations">
+      <div className="other-locations dashboard-section">
         <h3>Other Locations</h3>
         <div className="location-cards">
           {otherCities.map((city, index) => (

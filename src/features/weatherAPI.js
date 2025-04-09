@@ -10,7 +10,7 @@ export const getWeatherData = async (query) => {
       params: {
         key: API_KEY,
         q: query, 
-        days: 3, 
+        days: 7, 
       },
     });
     return response.data;
