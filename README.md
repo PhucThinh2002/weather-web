@@ -60,6 +60,7 @@
     Lưu ý: Nếu key hết hạn, vui lòng tự tạo tài khoản và lấy key mới.
 
 🧱 Cấu trúc thư mục cơ bản (Web)
+
 src/
 ├── assets/                # Hình ảnh, icon, fonts
 ├── components/            # Các component UI
