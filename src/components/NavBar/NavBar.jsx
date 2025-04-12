@@ -3,7 +3,7 @@ import "./NavBar.css";
 import { useDispatch, useSelector } from "react-redux";
 import { removeLocation } from "../../features/locationsSlice";
 
-const NavBar = ({ onLocationSelect }) => {
+const NavBar = ({ onLocationSelect, onUseCurrentLocation }) => {
   const [activeItem, setActiveItem] = useState("Home");
   const dispatch = useDispatch();
   const savedLocations = useSelector(state => state.locations);
@@ -11,7 +11,7 @@ const NavBar = ({ onLocationSelect }) => {
   const handleItemClick = (item) => {
     setActiveItem(item);
     if (item === "Home") {
-      onLocationSelect("auto:ip");
+      onUseCurrentLocation();
     }
   };
 
@@ -26,36 +26,36 @@ const NavBar = ({ onLocationSelect }) => {
         <ion-icon name="partly-sunny-outline"></ion-icon>
         <span>Weather</span>
       </div>
-      
+
       <ul className="nav-menu">
-        <li 
+        <li
           className={activeItem === "Home" ? "active" : ""}
           onClick={() => handleItemClick("Home")}
         >
           <ion-icon name="home-outline"></ion-icon>
           <span>Home</span>
         </li>
-        
-        <li 
+
+        <li
           className={activeItem === "Map" ? "active" : ""}
           onClick={() => handleItemClick("Map")}
         >
           <ion-icon name="map-outline"></ion-icon>
           <span>Map</span>
         </li>
-        
+
         <li className="divider"></li>
-        
+
         <h4>Saved Locations</h4>
-        
+
         {savedLocations.map(location => (
-          <li 
+          <li
             key={location.id}
             onClick={() => onLocationSelect(location.name)}
           >
             <ion-icon name="location-outline"></ion-icon>
             <span>{location.name}</span>
-            <button 
+            <button
               className="remove-btn"
               onClick={(e) => handleRemoveLocation(location.id, e)}
             >
@@ -64,13 +64,6 @@ const NavBar = ({ onLocationSelect }) => {
           </li>
         ))}
       </ul>
-      
-      <div className="nav-footer">
-        <button className="logout-btn">
-          <ion-icon name="log-out-outline"></ion-icon>
-          <span>Logout</span>
-        </button>
-      </div>
     </nav>
   );
 };

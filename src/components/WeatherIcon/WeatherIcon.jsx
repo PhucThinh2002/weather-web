@@ -1,7 +1,4 @@
-// src/components/WeatherIcon/WeatherIcon.jsx
 import React from "react";
-
-// Import tất cả các icon thời tiết
 import blizzardIcon from "../../assets/blizzard.png";
 import blowingSnowIcon from "../../assets/blowing-snow.png";
 import cloudyDayIcon from "../../assets/cloudy-day.png";
@@ -29,17 +26,17 @@ import sunWindyIcon from "../../assets/sun-windy.png";
 import sunnyIcon from "../../assets/sunny.png";
 import thunderRainIcon from "../../assets/thunder-rain.png";
 import thunderIcon from "../../assets/thunder.png";
-import defaultIcon from "../../assets/partly-cloudy.png"; // Icon mặc định
+import defaultIcon from "../../assets/partly-cloudy.png";
 
 const WeatherIcon = ({ condition, small = false }) => {
   const size = small ? "50px" : "150px";
-  
+
   // Ánh xạ điều kiện thời tiết với icon tương ứng
   const getIcon = () => {
     if (!condition) return defaultIcon;
-    
+
     const lowerCondition = condition.toLowerCase();
-    
+
     const iconMap = {
       "blizzard": blizzardIcon,
       "blowing snow": blowingSnowIcon,
@@ -69,25 +66,25 @@ const WeatherIcon = ({ condition, small = false }) => {
       "thunder rain": thunderRainIcon,
       "thunder": thunderIcon,
     };
-    
+
     // Tìm icon phù hợp nhất
     for (const [key, icon] of Object.entries(iconMap)) {
       if (lowerCondition.includes(key.toLowerCase())) {
         return icon;
       }
     }
-    
+
     return defaultIcon;
   };
-  
+
   const iconSrc = getIcon();
 
   return (
     <div className="weather-icon">
-      <img 
-        src={iconSrc} 
-        alt={condition} 
-        style={{ width: size, height: size }} 
+      <img
+        src={iconSrc}
+        alt={condition}
+        style={{ width: size, height: size }}
         onError={(e) => {
           e.target.src = defaultIcon; // Fallback icon
         }}

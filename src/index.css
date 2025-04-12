@@ -7,17 +7,32 @@
   box-sizing: border-box;
 }
 
+:root {
+  --mobile-breakpoint: 768px;
+  --tablet-breakpoint: 992px;
+  --primary-color: rgb(33, 166, 232);
+  --secondary-color: rgb(45, 171, 243);
+  --text-color: white;
+  --card-bg: rgba(255, 255, 255, 0.25);
+}
+
+/* Mobile First Approach */
 body {
-  min-height: 100vh; /* Thay vì height */
-  overflow-x: hidden; /* Chỉ chặn scroll ngang nếu cần */
-  overflow-y: auto; /* Cho phép scroll dọc */
+  min-height: 100vh;
   margin: 0;
-  padding: 20px;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
   background-image: radial-gradient(
     circle 382px at 50% 50.2%,
-    rgb(129, 203, 239) 0.1%,
-    rgb(45, 171, 243) 100.2%
+    var(--primary-color) 0.1%,
+    var(--secondary-color) 100.2%
   );
+  color: var(--text-color);
+}
+
+/* Ẩn scrollbar nhưng vẫn cho phép scroll */
+body::-webkit-scrollbar {
+  display: none;
 }
 
 @keyframes slide-up {

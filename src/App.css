@@ -1,11 +1,30 @@
-main {
-  margin-left: 0;
-  min-height: calc(100vh - 100px);
-  overflow-y: auto;
+.app-container {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
 }
 
+.main-content {
+  flex: 1;
+  padding: 1rem;
+  transition: all 0.3s ease;
+}
+
+/* Desktop */
 @media (min-width: 992px) {
-  main {
+  .app-container {
+    flex-direction: row;
+  }
+
+  .main-content {
     margin-left: 250px;
+    padding: 2rem;
+  }
+}
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 991px) {
+  .main-content {
+    padding: 1.5rem;
   }
 }

@@ -1,30 +1,27 @@
-/* WeatherIcon.css */
 .weather-icon {
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  transition: transform 0.2s ease;
 }
-
 /* Kích thước */
 .weather-icon.small ion-icon {
-  font-size: 24px;
+  font-size: 20px;
 }
 
 .weather-icon.medium ion-icon {
-  font-size: 48px;
+  font-size: 36px;
 }
 
 .weather-icon.large ion-icon {
-  font-size: 64px;
+  font-size: 48px;
 }
 
 /* Màu sắc */
 .weather-icon.orange ion-icon {
-  color: #FFA500;
+  color: #ffa500;
 }
 
 .weather-icon.blue ion-icon {
-  color: #4285F4;
+  color: #4285f4;
 }
 
 .weather-icon.gray ion-icon {
@@ -32,11 +29,25 @@
 }
 
 .weather-icon.white ion-icon {
-  color: #FFFFFF;
+  color: #ffffff;
 }
 
 /* Hiệu ứng hover */
 .weather-icon:hover ion-icon {
   transform: scale(1.1);
   transition: transform 0.2s ease;
+}
+
+@media (min-width: 768px) {
+  .weather-icon.small ion-icon {
+    font-size: 24px;
+  }
+
+  .weather-icon.medium ion-icon {
+    font-size: 48px;
+  }
+
+  .weather-icon.large ion-icon {
+    font-size: 64px;
+  }
 }

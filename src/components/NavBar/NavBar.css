@@ -16,6 +16,7 @@
   transition: transform 0.3s ease;
 }
 
+/* Thêm class open cho navbar khi hiển thị */
 .navbar.open {
   transform: translateX(0);
 }
@@ -115,7 +116,7 @@
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* Mobile menu toggle */
+/* Menu toggle cho mobile */
 .menu-toggle {
   position: fixed;
   top: 1rem;
@@ -127,7 +128,7 @@
   font-size: 1.5rem;
   width: 40px;
   height: 40px;
-  display: flex;
+  display: none; /* Ẩn trên desktop */
   align-items: center;
   justify-content: center;
   z-index: 101;
@@ -135,12 +136,25 @@
   backdrop-filter: blur(10px);
 }
 
+/* Desktop */
 @media (min-width: 992px) {
+  .navbar {
+    width: 250px;
+    height: 100vh;
+    transform: translateX(0);
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 1.5rem 1rem;
+  }
+
+  .nav-menu {
+    position: static;
+    background: transparent;
+    transform: none;
+    padding: 0;
+  }
+
   .menu-toggle {
     display: none;
-  }
-  
-  .navbar {
-    transform: translateX(0);
   }
 }

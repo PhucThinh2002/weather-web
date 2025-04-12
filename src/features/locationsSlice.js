@@ -1,7 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const locationsSlice = createSlice({
-  name: 'locations',
+  name: "locations",
   initialState: [],
   reducers: {
     addLocation: (state, action) => {
@@ -9,8 +9,8 @@ const locationsSlice = createSlice({
     },
     removeLocation: (state, action) => {
       return state.filter((location) => location.id !== action.payload);
-    }
-  }
+    },
+  },
 });
 
 export const { addLocation, removeLocation } = locationsSlice.actions;

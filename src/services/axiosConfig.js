@@ -4,19 +4,32 @@ const instance = axios.create();
 
 instance.interceptors.request.use(
   (config) => {
-    console.log("Request:", config);
+    // Thêm timestamp để tránh cache
+    config.params = {
+      ...config.params,
+      _: new Date().getTime(),
+    };
     return config;
   },
   (error) => Promise.reject(error)
 );
 
 instance.interceptors.response.use(
-  (response) => {
-    console.log("Response:", response);
-    return response;
-  },
+  (response) => response,
   (error) => {
-    console.error("Error:", error.response || error.message);
+    if (error.response) {
+      // Server trả về response với status code ngoài 2xx
+      console.error("API Error:", {
+        status: error.response.status,
+        data: error.response.data,
+      });
+    } else if (error.request) {
+      // Request được gửi nhưng không nhận được response
+      console.error("No response received:", error.request);
+    } else {
+      // Lỗi khi thiết lập request
+      console.error("Request setup error:", error.message);
+    }
     return Promise.reject(error);
   }
 );
