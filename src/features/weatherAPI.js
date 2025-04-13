@@ -1,8 +1,7 @@
 import axios from "../services/axiosConfig.js";
 
-// const API_KEY = "1f6ced3bfab143cda1e44028240205";
 const API_KEY = "dba9582a4ba244e4970115223250304";
-const BASE_URL = "http://api.weatherapi.com/v1";
+const BASE_URL = "https://api.weatherapi.com/v1";
 
 export const searchLocation = async (query) => {
   try {
@@ -14,7 +13,6 @@ export const searchLocation = async (query) => {
       },
     });
 
-    // Bỏ qua bước lọc nếu không cần thiết
     return response.data;
   } catch (error) {
     console.error("Search error:", error);
