@@ -14,21 +14,25 @@ const normalizeSearchQuery = (query) => {
 
 export const searchLocation = async (query) => {
   try {
-    // Giữ nguyên chuỗi tiếng Việt, không bỏ dấu
+    const normalizedQuery = normalizeSearchQuery(query);
     const response = await axios.get(`${BASE_URL}/search.json`, {
       params: {
         key: API_KEY,
-        q: query, // Giữ nguyên query gốc
-        lang: "vi", // Ngôn ngữ tiếng Việt
+        q: normalizedQuery,
+        lang: "vi",
       },
     });
 
-    // Lọc kết quả phù hợp với query gốc
-    const filteredResults = response.data.filter((location) => {
+     // Lọc kết quả phù hợp hơn với query gốc
+     const filteredResults = response.data.filter((location) => {
+      const normalizedName = normalizeSearchQuery(location.name);
+      const normalizedRegion = normalizeSearchQuery(location.region || "");
+      const normalizedCountry = normalizeSearchQuery(location.country || "");
+      
       return (
-        location.name.includes(query) ||
-        (location.region && location.region.includes(query)) ||
-        location.country.includes(query)
+        normalizedName.includes(normalizedQuery) ||
+        normalizedRegion.includes(normalizedQuery) ||
+        normalizedCountry.includes(normalizedQuery)
       );
     });
 
