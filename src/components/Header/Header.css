@@ -203,24 +203,60 @@ body {
   position: static;
 }
 
+.error-message {
+  color: #ff6b6b;
+  background: #fff0f0;
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  border: 1px solid #ffcccc;
+  position: absolute;
+  width: calc(100% - 24px);
+  z-index: 10;
+}
+
+.error-message ion-icon {
+  margin-right: 8px;
+  font-size: 16px;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
-  .suggestions-dropdown {
-    max-height: 50vh;
-    top: calc(100% + 5px);
-  }
-
   .header-section {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    border-radius: 1rem;
-    margin: 1rem auto;
-    max-width: 95%;
+    flex-direction: flex;
+    align-items: stretch;
+    padding: 0.5rem;
   }
 
   .search-area {
-    width: 50%;
-    margin-bottom: 0;
+    width: 70%;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .search-button {
+    margin-top: 0.25rem;
+    right: 1rem;
+    font-size: 1.2rem;
+  }
+
+  .search-area input {
+    padding-right: 3rem; /* để chừa chỗ cho icon */
+    font-size: 1rem;
+  }
+
+  .header-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0.5rem;
+    margin-right: 1rem;
+  }
+
+  .current-location {
+    font-size: 1.5rem;
   }
 }
+

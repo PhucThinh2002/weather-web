@@ -11,6 +11,12 @@ const Header = ({ onSearch }) => {
   const [isSearching, setIsSearching] = useState(false);
   const searchRef = useRef(null);
   const dispatch = useDispatch();
+  const [searchError, setSearchError] = useState(null);
+
+  const hasInvalidSpecialChars = (query) => {
+    const invalidChars = /[@#$%^&*()_+=\[\]{};':"\\|<>\/]+/;
+    return invalidChars.test(query);
+  };
 
   // Thêm effect để đóng suggestions khi click bên ngoài
   useEffect(() => {
@@ -26,40 +32,89 @@ const Header = ({ onSearch }) => {
     };
   }, []);
 
-  // Hàm fetch suggestions khi input thay đổi
   useEffect(() => {
-    const fetchSuggestions = async () => {
-      const query = searchInput.trim();
-      if (query.length < 2) {
-        setSearchResults([]);
-        return;
-      }
+  const fetchSuggestions = async () => {
+    const query = searchInput.trim();
+    
+    // Kiểm tra ký tự đặc biệt trước khi gọi API
+    if (hasInvalidSpecialChars(query)) {
+      setSearchError("Tên địa điểm không được chứa ký tự đặc biệt (@, *, _, ...)");
+      setSearchResults([]);
+      return;
+    }
+    
+    if (query.length < 2) {
+      setSearchResults([]);
+      setSearchError(null); // Reset lỗi khi query quá ngắn
+      return;
+    }
 
-      setIsSearching(true);
-      try {
-        const results = await searchLocation(query);
+    setIsSearching(true);
+    setSearchError(null);
+    
+    try {
+      const results = await searchLocation(query);
+      
+      // Ưu tiên kết quả có tên trùng khớp hơn
+      const exactMatch = results.find(item => 
+        item.name.toLowerCase().includes(query.toLowerCase()) ||
+        item.region?.toLowerCase().includes(query.toLowerCase())
+      );
+      
+      if (exactMatch) {
+        setSearchResults([exactMatch, ...results.filter(item => item !== exactMatch)]);
+      } else {
         setSearchResults(results);
-        setShowSuggestions(true);
-      } catch (error) {
-        console.error("Error fetching suggestions:", error);
-        setSearchResults([]);
-      } finally {
-        setIsSearching(false);
       }
-    };
+      
+      setShowSuggestions(true);
+    } catch (error) {
+      console.error("Error fetching suggestions:", error);
+      setSearchResults([]);
+      setSearchError(error.message || "Không thể tìm kiếm địa điểm");
+    } finally {
+      setIsSearching(false);
+    }
+  };
 
-    const debounceTimer = setTimeout(() => {
-      fetchSuggestions();
-    }, 300); // Debounce 300ms
+  const debounceTimer = setTimeout(() => {
+    fetchSuggestions();
+  }, 500);
 
-    return () => clearTimeout(debounceTimer);
-  }, [searchInput]);
+  return () => clearTimeout(debounceTimer);
+}, [searchInput]);
 
   const handleWeatherSelection = async (location) => {
     try {
+      // Thử tìm kiếm chính xác hơn bằng cách kết hợp name và region
       const weatherData = await getWeatherData(location);
-      onSearch(location);
+      
+      // Kiểm tra xem có phải là kết quả mong muốn không
+      const isDesiredLocation = weatherData.location.name.toLowerCase().includes(searchInput.toLowerCase()) || 
+                               weatherData.location.region?.toLowerCase().includes(searchInput.toLowerCase());
+      
+      if (!isDesiredLocation && searchResults.length > 1) {
+        // Thử với kết quả thứ 2 nếu kết quả đầu không khớp
+        const secondTry = await getWeatherData(searchResults[1].name);
+        if (secondTry.location.name.toLowerCase().includes(searchInput.toLowerCase())) {
+          onSearch(searchResults[1].name);
+          dispatch(
+            addLocation({
+              id: Date.now(),
+              name: secondTry.location.name,
+              region: secondTry.location.region,
+              country: secondTry.location.country,
+              lat: secondTry.location.lat,
+              lon: secondTry.location.lon
+            })
+          );
+          setSearchInput("");
+          setShowSuggestions(false);
+          return;
+        }
+      }
 
+      onSearch(location);
       dispatch(
         addLocation({
           id: Date.now(),
@@ -70,7 +125,6 @@ const Header = ({ onSearch }) => {
           lon: weatherData.location.lon
         })
       );
-
       setSearchInput("");
       setShowSuggestions(false);
     } catch (error) {
@@ -79,10 +133,41 @@ const Header = ({ onSearch }) => {
     }
   };
 
-  const handleSearchSubmit = (e) => {
+  const handleSearchSubmit = async (e) => {
     e.preventDefault();
-    if (searchInput.trim() && searchResults.length > 0) {
-      handleWeatherSelection(searchResults[0].name);
+    const query = searchInput.trim();
+    
+    // Kiểm tra nếu search input rỗng
+    if (!query) {
+      setSearchError("Vui lòng nhập địa điểm cần tìm");
+      return;
+    }
+  
+    // Kiểm tra ký tự đặc biệt
+    if (hasInvalidSpecialChars(query)) {
+      setSearchError("Tên địa điểm không được chứa ký tự đặc biệt (@, *, _, ...)");
+      return;
+    }
+  
+    setIsSearching(true);
+    setSearchError(null);
+  
+    try {
+      const results = await searchLocation(query);
+      
+      if (!results || results.length === 0) {
+        throw new Error(`Không tìm thấy địa điểm "${query}"`);
+      }
+  
+      const firstResult = results[0];
+      await handleWeatherSelection(firstResult.name);
+      
+    } catch (error) {
+      console.error("Search error:", error);
+      setSearchError(error.message || "Không thể tìm kiếm địa điểm");
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
     }
   };
 
@@ -96,16 +181,16 @@ const Header = ({ onSearch }) => {
         async ({ coords }) => {
           const { latitude, longitude } = coords;
           await handleWeatherSelection(`${latitude},${longitude}`);
-          setSearchInput("Vị trí hiện tại");
+          setSearchInput(""); // Thay vì set "Vị trí hiện tại"
         },
         () => {
           handleWeatherSelection("auto:ip");
-          setSearchInput("Vị trí mặc định");
+          setSearchInput(""); // Thay vì set "Vị trí mặc định"
         }
       );
     } else {
       handleWeatherSelection("auto:ip");
-      setSearchInput("Vị trí mặc định");
+      setSearchInput(""); // Thay vì set "Vị trí mặc định"
     }
   };
 
@@ -115,7 +200,7 @@ const Header = ({ onSearch }) => {
         <div className="search-input-wrapper">
           <input
             type="text"
-            placeholder="Search any location (city, region, country)..."
+            placeholder="Search any location"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             onFocus={() => setShowSuggestions(true)}
@@ -126,6 +211,13 @@ const Header = ({ onSearch }) => {
               <ion-icon name="search-outline"></ion-icon>
             </div>
           )}
+
+        {searchError && (
+          <div className="error-message">
+            <ion-icon name="warning-outline"></ion-icon>
+            <span>{searchError}</span>
+          </div>
+        )}
 
           {showSuggestions && searchResults.length > 0 && (
             <div className="suggestions-dropdown">

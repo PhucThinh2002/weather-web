@@ -1,12 +1,28 @@
 import React, { useState } from "react";
 import "./NavBar.css";
 import { useDispatch, useSelector } from "react-redux";
-import { removeLocation } from "../../features/locationsSlice";
+import { removeLocation, selectUniqueLocations } from "../../features/locationsSlice";
 
 const NavBar = ({ onLocationSelect, onUseCurrentLocation }) => {
   const [activeItem, setActiveItem] = useState("Home");
   const dispatch = useDispatch();
-  const savedLocations = useSelector(state => state.locations);
+  const savedLocations = useSelector(selectUniqueLocations);
+
+  // Hàm lọc các địa điểm trùng lặp
+  const getUniqueLocations = () => {
+    const uniqueLocations = [];
+    const seen = new Set();
+    
+    savedLocations.forEach(location => {
+      const key = `${location.name}-${location.region || ''}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        uniqueLocations.push(location);
+      }
+    });
+    
+    return uniqueLocations;
+  };
 
   const handleItemClick = (item) => {
     setActiveItem(item);
@@ -48,13 +64,14 @@ const NavBar = ({ onLocationSelect, onUseCurrentLocation }) => {
 
         <h4>Saved Locations</h4>
 
-        {savedLocations.map(location => (
+        {getUniqueLocations().map(location => (
           <li
             key={location.id}
             onClick={() => onLocationSelect(location.name)}
           >
             <ion-icon name="location-outline"></ion-icon>
             <span>{location.name}</span>
+            {location.region && <span className="region">{`, ${location.region}`}</span>}
             <button
               className="remove-btn"
               onClick={(e) => handleRemoveLocation(location.id, e)}
