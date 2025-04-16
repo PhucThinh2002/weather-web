@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./Header.css";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addLocation } from "../../features/locationsSlice";
 import { searchLocation, getWeatherData } from "../../features/weatherAPI";
+import TemperatureSettings from '../TemperatureToggle/TemperatureSettings';
 
 const Header = ({ onSearch }) => {
   const [searchInput, setSearchInput] = useState("");
@@ -12,6 +13,8 @@ const Header = ({ onSearch }) => {
   const searchRef = useRef(null);
   const dispatch = useDispatch();
   const [searchError, setSearchError] = useState(null);
+  const [showSettings, setShowSettings] = useState(false);
+  const { unit } = useSelector(state => state.temperature);
 
   const hasInvalidSpecialChars = (query) => {
     const invalidChars = /[@#$%^&*()_+=\[\]{};':"\\|<>\/]+/;
@@ -251,6 +254,13 @@ const Header = ({ onSearch }) => {
       </form>
 
       <div className="header-actions">
+        <button 
+          className="temperature-toggle"
+          onClick={() => setShowSettings(!showSettings)}
+        >
+          {unit}°
+        </button>
+
         <button
           className="current-location"
           onClick={handleCurrentLocation}
@@ -258,6 +268,12 @@ const Header = ({ onSearch }) => {
         >
           <ion-icon name="locate-outline"></ion-icon>
         </button>
+
+        {showSettings && (
+          <div className="settings-dropdown">
+            <TemperatureSettings />
+          </div>
+        )}
       </div>
     </section>
   );

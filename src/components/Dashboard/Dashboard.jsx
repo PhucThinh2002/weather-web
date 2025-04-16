@@ -3,6 +3,7 @@ import "./Dashboard.css";
 import { useSelector, useDispatch } from "react-redux";
 import { getWeatherData } from "../../features/weatherAPI";
 import WeatherIcon from "../WeatherIcon/WeatherIcon";
+import TemperatureDisplay from "../TemperatureToggle/TemperatureDisplay";
 
 const Dashboard = ({ searchCountry }) => {
   const [weather, setWeather] = useState(null);
@@ -96,7 +97,7 @@ const Dashboard = ({ searchCountry }) => {
         <div className="weather-main">
           <WeatherIcon condition={weather?.current?.condition?.text} />
           <div className="temperature">
-            <span>{weather?.current?.temp_c}°C</span>
+          <TemperatureDisplay tempC={weather?.current?.temp_c} />
             <p>{weather?.current?.condition?.text}</p>
           </div>
         </div>
@@ -104,7 +105,7 @@ const Dashboard = ({ searchCountry }) => {
         <div className="weather-details">
           <div className="detail-item">
             <span>Feels Like </span>
-            <span>{weather?.current?.feelslike_c}°C</span>
+            <TemperatureDisplay tempC={weather?.current?.temp_c} />
           </div>
           <div className="detail-item">
             <span>Humidity </span>
@@ -137,8 +138,8 @@ const Dashboard = ({ searchCountry }) => {
                 </p>
                 <WeatherIcon condition={day.day.condition.text} small />
                 <div className="temps">
-                  <span className="max-temp">{day.day.maxtemp_c}°</span>
-                  <span className="min-temp">{day.day.mintemp_c}°</span>
+                  <TemperatureDisplay tempC={weather?.current?.temp_c} />
+                  <TemperatureDisplay tempC={weather?.current?.temp_c} />
                 </div>
               </div>
             ))}
@@ -164,7 +165,7 @@ const Dashboard = ({ searchCountry }) => {
                 </div>
                 <div className="card-content">
                   <WeatherIcon condition={city.current.condition.text} small />
-                  <span>{city.current.temp_c}°C</span>
+                  <TemperatureDisplay tempC={weather?.current?.temp_c} />
                 </div>
                 <p>{city.current.condition.text}</p>
               </div>
