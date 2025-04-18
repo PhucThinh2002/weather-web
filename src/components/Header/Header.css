@@ -49,14 +49,13 @@
 .search-button {
   position: absolute;
   right: 0.5rem;
-  top: 50%;
+  top: 55%;
   transform: translateY(-50%);
   background: transparent;
   border: none;
   color: white;
   font-size: 1.2rem;
   cursor: pointer;
-  padding: 0.5rem;
 }
 
 .header-actions {
@@ -119,7 +118,7 @@
 /* Thêm vào Header.css */
 .search-input-wrapper {
   position: relative;
-  z-index: 1100; /* Cao hơn tất cả */
+  z-index: 1100; 
 }
 
 .suggestions-dropdown {
@@ -134,7 +133,7 @@
   border-radius: 8px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  z-index: 9999 !important; /* Cao nhất */
+  z-index: 9999 !important;
   padding: 8px 0;
   margin: 0;
   list-style: none;
@@ -227,91 +226,74 @@ body {
 /* Responsive */
 @media (max-width: 768px) {
   .header-section {
-    flex-direction: flex;
-    align-items: stretch;
-    padding: 0.5rem;
+    flex-direction: row; /* Đảm bảo các phần tử xếp theo hàng ngang */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    padding: 0.8rem 1rem; /* Điều chỉnh padding cho gọn */
+    gap: 0.5rem; /* Thêm khoảng cách giữa các phần tử */
   }
 
   .search-area {
-    width: 70%;
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
+    width: 60%; /* Giảm width để chừa chỗ cho các nút bên phải */
+    margin: 0; /* Bỏ margin để căn chỉnh ngang hàng */
+    flex-grow: 1; /* Cho phép search area mở rộng nếu cần */
+  }
+
+  .header-actions {
+    margin: 0; /* Bỏ margin */
+    gap: 0.5rem; /* Giảm khoảng cách giữa các nút */
+    align-items: center; /* Căn giữa theo chiều dọc */
+  }
+
+  .temperature-toggle {
+    margin: 0; /* Bỏ margin */
+    padding: 0.5rem; /* Điều chỉnh padding */
+    min-width: auto; /* Bỏ min-width cố định */
+  }
+
+  .current-location {
+    margin: 0; /* Bỏ margin-top lớn */
+    padding: 0.5rem; /* Điều chỉnh padding */
   }
 
   .search-button {
-    margin-top: 0.25rem;
-    right: 1rem;
-    font-size: 1.2rem;
-  }
-
-  .search-area input {
-    padding-right: 3rem; /* để chừa chỗ cho icon */
-    font-size: 1rem;
-  }
-
-  .header-actions {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 0.5rem;
-    margin-right: 1rem;
-  }
-
-  .current-location {
-    font-size: 1.5rem;
+    margin-bottom: 0; /* Bỏ margin-bottom lớn */
+    right: 0.5rem; /* Điều chỉnh vị trí */
+  
   }
 }
 
-/* Header Actions - Mobile */
-@media (max-width: 768px) {
-  .header-actions {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .temperature-toggle {
-    padding: 6px 10px;
-    font-size: 14px;
-    order: 1; /* Đưa nút nhiệt độ lên trước nút vị trí */
-  }
-
-  .current-location {
-    padding: 6px;
-    margin-top: 2rem;
-    order: 2;
-  }
-
-  .settings-dropdown {
-    width: 280px;
-    right: -50px;
-    top: 40px;
-  }
-
-  /* Đảm bảo dropdown không bị che khi mở */
-  .header-section {
-    position: relative;
-    z-index: 10;
-  }
-}
-
-/* Điều chỉnh cho màn hình rất nhỏ */
+/* Điều chỉnh thêm cho màn hình rất nhỏ */
 @media (max-width: 480px) {
+  .header-section {
+    padding: 0.6rem 0.8rem; /* Giảm padding hơn nữa */
+    gap: 0.3rem; /* Giảm khoảng cách giữa các phần tử */
+  }
+
+  .search-area {
+    width: 55%; /* Giảm width thêm */
+  }
+
+  .header-actions {
+    gap: 0.3rem; /* Giảm khoảng cách giữa các nút */
+  }
+
   .temperature-toggle {
-    min-width: 40px;
-    text-align: center;
-    margin-bottom: 5px;
-    margin-left: 6px;
+    font-size: 14px; /* Giảm kích thước font */
+    padding: 0.4rem; /* Giảm padding */
   }
 
-  .settings-dropdown {
-    width: 250px;
-    right: -80px;
-    font-size: 14px;
-  }
-
-  .settings-title {
-    font-size: 14px;
+  .current-location ion-icon {
+    font-size: 1.1rem; /* Giảm kích thước icon */
   }
 }
 
+@media (max-width: 768px) {
+  .header-wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .temperature {
+    margin-top: 8px;
+  }
+}

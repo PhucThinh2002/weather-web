@@ -1,6 +1,6 @@
 import axios from "../services/axiosConfig.js";
 
-const API_KEY = "dba9582a4ba244e4970115223250304";
+const API_KEY = "50c659426e4c4531a9e171350251204";
 const BASE_URL = "https://api.weatherapi.com/v1";
 
 // Hàm chuẩn hóa chuỗi tìm kiếm
@@ -55,7 +55,7 @@ export const getWeatherData = async (location, days = 7) => {
         // lang: "vi" // Ngôn ngữ tiếng Việt
       },
     });
-
+    console.log(response.data.forecast) 
     // Kiểm tra cấu trúc dữ liệu trả về
     if (!response.data.forecast?.forecastday) {
       throw new Error("Invalid forecast data structure");

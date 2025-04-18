@@ -11,9 +11,10 @@ const Header = ({ onSearch }) => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const searchRef = useRef(null);
+  const tempSettingsRef = useRef(null);
   const dispatch = useDispatch();
   const [searchError, setSearchError] = useState(null);
-  const [showSettings, setShowSettings] = useState(false);
+  const [showTempSettings, setShowTempSettings] = useState(false);
   const { unit } = useSelector(state => state.temperature);
 
   const hasInvalidSpecialChars = (query) => {
@@ -21,11 +22,17 @@ const Header = ({ onSearch }) => {
     return invalidChars.test(query);
   };
 
-  // Thêm effect để đóng suggestions khi click bên ngoài
+  // Đóng suggestions và temperature settings khi click bên ngoài
   useEffect(() => {
     const handleClickOutside = (event) => {
+      // Đóng search suggestions nếu click bên ngoài
       if (searchRef.current && !searchRef.current.contains(event.target)) {
         setShowSuggestions(false);
+      }
+      
+      // Đóng temperature settings nếu click bên ngoài
+      if (tempSettingsRef.current && !tempSettingsRef.current.contains(event.target)) {
+        setShowTempSettings(false);
       }
     };
 
@@ -253,14 +260,15 @@ const Header = ({ onSearch }) => {
         </button>
       </form>
 
-      <div className="header-actions">
+      <div className="header-actions" ref={tempSettingsRef}>
         <button 
           className="temperature-toggle"
-          onClick={() => setShowSettings(!showSettings)}
+          onClick={() => setShowTempSettings(!showTempSettings)}
+          aria-expanded={showTempSettings}
         >
           {unit}°
         </button>
-
+        
         <button
           className="current-location"
           onClick={handleCurrentLocation}
@@ -268,10 +276,10 @@ const Header = ({ onSearch }) => {
         >
           <ion-icon name="locate-outline"></ion-icon>
         </button>
-
-        {showSettings && (
+        
+        {showTempSettings && (
           <div className="settings-dropdown">
-            <TemperatureSettings />
+            <TemperatureSettings onClose={() => setShowTempSettings(false)} />
           </div>
         )}
       </div>

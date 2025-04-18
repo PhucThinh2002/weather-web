@@ -52,14 +52,6 @@ const NavBar = ({ onLocationSelect, onUseCurrentLocation }) => {
           <span>Home</span>
         </li>
 
-        <li
-          className={activeItem === "Map" ? "active" : ""}
-          onClick={() => handleItemClick("Map")}
-        >
-          <ion-icon name="map-outline"></ion-icon>
-          <span>Map</span>
-        </li>
-
         <li className="divider"></li>
 
         <h4>Saved Locations</h4>
