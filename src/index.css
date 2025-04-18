@@ -16,7 +16,6 @@
   --card-bg: rgba(255, 255, 255, 0.25);
 }
 
-/* Mobile First Approach */
 body {
   min-height: 100vh;
   margin: 0;
@@ -30,7 +29,6 @@ body {
   color: var(--text-color);
 }
 
-/* Ẩn scrollbar nhưng vẫn cho phép scroll */
 body::-webkit-scrollbar {
   display: none;
 }

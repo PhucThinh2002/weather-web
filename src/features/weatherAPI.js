@@ -3,11 +3,10 @@ import axios from "../services/axiosConfig.js";
 const API_KEY = "50c659426e4c4531a9e171350251204";
 const BASE_URL = "https://api.weatherapi.com/v1";
 
-// Hàm chuẩn hóa chuỗi tìm kiếm
 const normalizeSearchQuery = (query) => {
   return query
-    .normalize("NFD") // Chuẩn hóa Unicode
-    .replace(/[\u0300-\u036f]/g, "") // Bỏ dấu
+    .normalize("NFD") 
+    .replace(/[\u0300-\u036f]/g, "") 
     .toLowerCase()
     .trim();
 };
@@ -23,7 +22,6 @@ export const searchLocation = async (query) => {
       },
     });
 
-     // Lọc kết quả phù hợp hơn với query gốc
      const filteredResults = response.data.filter((location) => {
       const normalizedName = normalizeSearchQuery(location.name);
       const normalizedRegion = normalizeSearchQuery(location.region || "");
@@ -49,14 +47,12 @@ export const getWeatherData = async (location, days = 7) => {
       params: {
         key: API_KEY,
         q: location,
-        days: days, // Số ngày forecast (1-14)
-        aqi: "no", // Không lấy dữ liệu chất lượng không khí
-        alerts: "no", // Không lấy cảnh báo thời tiết
-        // lang: "vi" // Ngôn ngữ tiếng Việt
+        days: days, 
+        aqi: "no",
+        alerts: "no", 
       },
     });
     console.log(response.data.forecast) 
-    // Kiểm tra cấu trúc dữ liệu trả về
     if (!response.data.forecast?.forecastday) {
       throw new Error("Invalid forecast data structure");
     }

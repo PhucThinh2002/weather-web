@@ -16,7 +16,6 @@
   transition: transform 0.3s ease;
 }
 
-/* Thêm class open cho navbar khi hiển thị */
 .navbar.open {
   transform: translateX(0);
 }
@@ -116,7 +115,6 @@
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* Menu toggle cho mobile */
 .menu-toggle {
   position: fixed;
   top: 1rem;
@@ -128,7 +126,7 @@
   font-size: 1.5rem;
   width: 40px;
   height: 40px;
-  display: none; /* Ẩn trên desktop */
+  display: none;
   align-items: center;
   justify-content: center;
   z-index: 101;
@@ -136,7 +134,6 @@
   backdrop-filter: blur(10px);
 }
 
-/* Desktop */
 @media (min-width: 992px) {
   .navbar {
     width: 250px;

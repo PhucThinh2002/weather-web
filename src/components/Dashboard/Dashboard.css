@@ -30,7 +30,6 @@
 .location-info p {
   margin: 0.5rem 0 0;
   font-size: 0.9rem;
-  opacity: 0.8;
 }
 
 .weather-main {
@@ -306,7 +305,6 @@
   margin: 0 2px;
 }
 
-/* Tùy chỉnh cho các phần hiển thị nhiệt độ */
 .weather-main .temperature,
 .detail-item span:last-child,
 .forecast-item .temps span,

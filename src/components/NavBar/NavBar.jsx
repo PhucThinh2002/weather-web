@@ -8,7 +8,6 @@ const NavBar = ({ onLocationSelect, onUseCurrentLocation }) => {
   const dispatch = useDispatch();
   const savedLocations = useSelector(selectUniqueLocations);
 
-  // Hàm lọc các địa điểm trùng lặp
   const getUniqueLocations = () => {
     const uniqueLocations = [];
     const seen = new Set();

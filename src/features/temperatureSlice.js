@@ -3,8 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 const temperatureSlice = createSlice({
   name: 'temperature',
   initialState: {
-    unit: 'C', // Mặc định là Celsius
-    showBoth: false // Mặc định chỉ hiển thị một đơn vị
+    unit: 'C', 
+    showBoth: false 
   },
   reducers: {
     toggleTemperatureUnit: (state) => {

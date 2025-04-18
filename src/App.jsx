@@ -32,12 +32,12 @@ const App = () => {
   };
 
   const handleSearch = (location) => {
-    setUsingCurrentLocation(false); // Đánh dấu không dùng vị trí hiện tại nữa
+    setUsingCurrentLocation(false);
     setSearchCountry(location);
   };
 
   const handleUseCurrentLocation = () => {
-    setUsingCurrentLocation(true); // Kích hoạt lại useEffect để lấy vị trí hiện tại
+    setUsingCurrentLocation(true);
   };
 
   return (

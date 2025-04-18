@@ -115,15 +115,14 @@
   background: #f0f0f0;
 }
 
-/* Thêm vào Header.css */
 .search-input-wrapper {
   position: relative;
   z-index: 1100; 
 }
 
 .suggestions-dropdown {
-  position: fixed; /* Thay absolute bằng fixed */
-  top: calc(var(--search-area-bottom) + 5px); /* Tính toán vị trí */
+  position: fixed;
+  top: calc(var(--search-area-bottom) + 5px);
   left: var(--search-area-left);
   width: var(--search-area-width);
   max-height: 60vh;
@@ -133,7 +132,7 @@
   border-radius: 8px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  z-index: 9999 !important;
+  z-index: 999;
   padding: 8px 0;
   margin: 0;
   list-style: none;
@@ -189,7 +188,6 @@
   text-overflow: ellipsis;
 }
 
-/* Fix cho các phần tử cha */
 body {
   overflow-x: hidden;
 }
@@ -226,74 +224,63 @@ body {
 /* Responsive */
 @media (max-width: 768px) {
   .header-section {
-    flex-direction: row; /* Đảm bảo các phần tử xếp theo hàng ngang */
-    align-items: center; /* Căn giữa theo chiều dọc */
-    padding: 0.8rem 1rem; /* Điều chỉnh padding cho gọn */
-    gap: 0.5rem; /* Thêm khoảng cách giữa các phần tử */
+    flex-direction: row; 
+    align-items: center;
+    padding: 0.8rem 1rem; 
+    gap: 0.5rem; 
   }
 
   .search-area {
-    width: 60%; /* Giảm width để chừa chỗ cho các nút bên phải */
-    margin: 0; /* Bỏ margin để căn chỉnh ngang hàng */
-    flex-grow: 1; /* Cho phép search area mở rộng nếu cần */
+    width: 60%;
+    margin: 0;
+    flex-grow: 1;
   }
 
   .header-actions {
-    margin: 0; /* Bỏ margin */
-    gap: 0.5rem; /* Giảm khoảng cách giữa các nút */
-    align-items: center; /* Căn giữa theo chiều dọc */
+    margin: 0; 
+    gap: 0.5rem; 
+    align-items: center;
   }
 
   .temperature-toggle {
-    margin: 0; /* Bỏ margin */
-    padding: 0.5rem; /* Điều chỉnh padding */
-    min-width: auto; /* Bỏ min-width cố định */
+    margin: 0;
+    padding: 0.5rem; 
+    min-width: auto; 
   }
 
   .current-location {
-    margin: 0; /* Bỏ margin-top lớn */
-    padding: 0.5rem; /* Điều chỉnh padding */
+    margin: 0; 
+    padding: 0.5rem; 
   }
 
   .search-button {
-    margin-bottom: 0; /* Bỏ margin-bottom lớn */
-    right: 0.5rem; /* Điều chỉnh vị trí */
+    margin-bottom: 0; 
+    right: 0.5rem; 
   
   }
 }
 
-/* Điều chỉnh thêm cho màn hình rất nhỏ */
 @media (max-width: 480px) {
   .header-section {
-    padding: 0.6rem 0.8rem; /* Giảm padding hơn nữa */
-    gap: 0.3rem; /* Giảm khoảng cách giữa các phần tử */
+    padding: 0.6rem 0.8rem; 
+    gap: 0.3rem; 
   }
 
   .search-area {
-    width: 55%; /* Giảm width thêm */
+    width: 55%; 
   }
 
   .header-actions {
-    gap: 0.3rem; /* Giảm khoảng cách giữa các nút */
+    gap: 0.3rem;
   }
 
   .temperature-toggle {
-    font-size: 14px; /* Giảm kích thước font */
-    padding: 0.4rem; /* Giảm padding */
+    font-size: 14px; 
+    padding: 0.4rem; 
   }
 
   .current-location ion-icon {
-    font-size: 1.1rem; /* Giảm kích thước icon */
+    font-size: 1.1rem; 
   }
 }
 
-@media (max-width: 768px) {
-  .header-wrapper {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .temperature {
-    margin-top: 8px;
-  }
-}

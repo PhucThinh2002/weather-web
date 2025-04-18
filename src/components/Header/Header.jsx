@@ -191,16 +191,16 @@ const Header = ({ onSearch }) => {
         async ({ coords }) => {
           const { latitude, longitude } = coords;
           await handleWeatherSelection(`${latitude},${longitude}`);
-          setSearchInput(""); // Thay vì set "Vị trí hiện tại"
+          setSearchInput(""); 
         },
         () => {
           handleWeatherSelection("auto:ip");
-          setSearchInput(""); // Thay vì set "Vị trí mặc định"
+          setSearchInput(""); 
         }
       );
     } else {
       handleWeatherSelection("auto:ip");
-      setSearchInput(""); // Thay vì set "Vị trí mặc định"
+      setSearchInput(""); 
     }
   };
 

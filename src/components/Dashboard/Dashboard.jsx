@@ -19,10 +19,8 @@ const Dashboard = ({ searchCountry }) => {
         setLoading(true);
         setError(null);
 
-        // Lấy dữ liệu 7 ngày cho vị trí chính
         const currentData = await getWeatherData(searchCountry || "auto:ip", 7);
 
-        // Lấy dữ liệu 3 ngày cho các thành phố khác (tiết kiệm API calls)
         const citiesToFetch = savedLocations.length > 0
           ? savedLocations.map(loc => loc.name)
           : ["Paris", "Tokyo", "New York", "London"];
@@ -44,7 +42,6 @@ const Dashboard = ({ searchCountry }) => {
         console.error("Fetch error:", err);
         setError(err.response?.data?.error?.message || "Failed to fetch weather data");
 
-        // Fallback: Thử lấy 3 ngày nếu gặp lỗi
         if (err.response?.status === 403) {
           const fallbackData = await getWeatherData(searchCountry || "auto:ip", 3);
           setWeather(fallbackData);
@@ -63,9 +60,6 @@ const Dashboard = ({ searchCountry }) => {
       newCities.splice(index, 1);
       return newCities;
     });
-
-    // Nếu bạn lưu trong state management (Redux, Context)
-    // dispatch(removeOtherLocation(index));
   };
   if (loading) return (
     <div className="loading-screen">

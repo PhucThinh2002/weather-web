@@ -1,6 +1,5 @@
 import { createSelector, createSlice } from "@reduxjs/toolkit";
 
-// Hàm để lấy danh sách địa điểm từ localStorage
 const loadLocationsFromLocalStorage = () => {
   try {
     const serializedLocations = localStorage.getItem('savedLocations');
@@ -14,7 +13,6 @@ const loadLocationsFromLocalStorage = () => {
   }
 };
 
-// Hàm để lưu danh sách địa điểm vào localStorage
 const saveLocationsToLocalStorage = (locations) => {
   try {
     const serializedLocations = JSON.stringify(locations);
@@ -31,7 +29,6 @@ const locationsSlice = createSlice({
   initialState: loadLocationsFromLocalStorage(),
   reducers: {
     addLocation: (state, action) => {
-      // Kiểm tra địa điểm đã tồn tại chưa
       const isDuplicate = state.some(
         (location) =>
           location.name === action.payload.name &&

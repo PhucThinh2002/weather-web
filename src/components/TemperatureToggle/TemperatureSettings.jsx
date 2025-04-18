@@ -9,7 +9,7 @@ const TemperatureSettings = () => {
 
   const handleOptionChange = (newUnit, showBoth) => {
     dispatch(setTemperatureDisplay({ unit: newUnit, showBoth }));
-    onClose(); // Đóng dropdown sau khi chọn
+    onClose(); 
   };
   
   return (

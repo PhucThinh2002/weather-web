@@ -31,7 +31,6 @@ import defaultIcon from "../../assets/partly-cloudy.png";
 const WeatherIcon = ({ condition, small = false }) => {
   const size = small ? "50px" : "150px";
 
-  // Ánh xạ điều kiện thời tiết với icon tương ứng
   const getIcon = () => {
     if (!condition) return defaultIcon;
 
@@ -67,7 +66,6 @@ const WeatherIcon = ({ condition, small = false }) => {
       "thunder": thunderIcon,
     };
 
-    // Tìm icon phù hợp nhất
     for (const [key, icon] of Object.entries(iconMap)) {
       if (lowerCondition.includes(key.toLowerCase())) {
         return icon;
@@ -86,7 +84,7 @@ const WeatherIcon = ({ condition, small = false }) => {
         alt={condition}
         style={{ width: size, height: size }}
         onError={(e) => {
-          e.target.src = defaultIcon; // Fallback icon
+          e.target.src = defaultIcon; 
         }}
       />
     </div>

@@ -2,7 +2,7 @@
   display: inline-flex;
   transition: transform 0.2s ease;
 }
-/* Kích thước */
+
 .weather-icon.small ion-icon {
   font-size: 20px;
 }
@@ -15,7 +15,6 @@
   font-size: 48px;
 }
 
-/* Màu sắc */
 .weather-icon.orange ion-icon {
   color: #ffa500;
 }
@@ -32,7 +31,6 @@
   color: #ffffff;
 }
 
-/* Hiệu ứng hover */
 .weather-icon:hover ion-icon {
   transform: scale(1.1);
   transition: transform 0.2s ease;
