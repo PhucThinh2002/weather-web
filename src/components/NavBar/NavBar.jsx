@@ -11,7 +11,7 @@ const NavBar = ({ onLocationSelect, onUseCurrentLocation }) => {
   const getUniqueLocations = () => {
     const uniqueLocations = [];
     const seen = new Set();
-    
+
     savedLocations.forEach(location => {
       const key = `${location.name}-${location.region || ''}`;
       if (!seen.has(key)) {
@@ -19,7 +19,7 @@ const NavBar = ({ onLocationSelect, onUseCurrentLocation }) => {
         uniqueLocations.push(location);
       }
     });
-    
+
     return uniqueLocations;
   };
 
@@ -59,9 +59,10 @@ const NavBar = ({ onLocationSelect, onUseCurrentLocation }) => {
           <li
             key={location.id}
             onClick={() => onLocationSelect(location.name)}
+            className="saved-location-item"
           >
             <ion-icon name="location-outline"></ion-icon>
-            <span>{location.name}</span>
+            <span className="location-name">{location.name}</span>
             {location.region && <span className="region">{`, ${location.region}`}</span>}
             <button
               className="remove-btn"

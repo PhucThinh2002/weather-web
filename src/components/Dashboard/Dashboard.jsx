@@ -162,7 +162,7 @@ const Dashboard = ({ searchCountry }) => {
                 </div>
                 <div className="card-content">
                   <WeatherIcon condition={city.current.condition.text} small />
-                  <TemperatureDisplay tempC={weather?.current?.temp_c} />
+                  <TemperatureDisplay tempC={city.current .temp_c} />
                 </div>
                 <p>{city.current.condition.text}</p>
               </div>
