@@ -14,45 +14,47 @@ const Dashboard = ({ searchCountry }) => {
   const savedLocations = useSelector(state => state.locations);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchCurrentWeather = async () => {
       try {
         setLoading(true);
         setError(null);
-
         const currentData = await getWeatherData(searchCountry || "auto:ip", 7);
-
-        const citiesToFetch = savedLocations.length > 0
-          ? savedLocations.map(loc => loc.name)
-          : ["Paris", "Tokyo", "New York", "London"];
-
-        const citiesData = await Promise.all(
-          citiesToFetch.map(city =>
-            getWeatherData(city, 7)
-              .catch(e => {
-                console.error(`Error fetching ${city}:`, e);
-                return null;
-              })
-          )
-        );
-
         setWeather(currentData);
-        setOtherCities(citiesData.filter(Boolean));
-
       } catch (err) {
         console.error("Fetch error:", err);
         setError(err.response?.data?.error?.message || "Failed to fetch weather data");
-
-        if (err.response?.status === 403) {
-          const fallbackData = await getWeatherData(searchCountry || "auto:ip", 3);
-          setWeather(fallbackData);
-        }
       } finally {
         setLoading(false);
       }
     };
+  
+    fetchCurrentWeather();
+  }, [searchCountry]);
 
-    fetchData();
-  }, [searchCountry, savedLocations]);
+  useEffect(() => {
+    const fetchOtherCities = async () => {
+      try {
+        const citiesToFetch = savedLocations.length > 0
+          ? savedLocations.map(loc => loc.name)
+          : ["Paris", "Tokyo", "New York", "London"];
+  
+        const citiesData = await Promise.all(
+          citiesToFetch.map(city =>
+            getWeatherData(city, 7).catch(e => {
+              console.error(`Error fetching ${city}:`, e);
+              return null;
+            })
+          )
+        );
+  
+        setOtherCities(citiesData.filter(Boolean));
+      } catch (err) {
+        console.error("Error fetching other cities:", err);
+      }
+    };
+  
+    fetchOtherCities();
+  }, [savedLocations]);  
 
   const handleRemoveLocation = (index) => {
     setOtherCities(prevCities => {
@@ -132,8 +134,9 @@ const Dashboard = ({ searchCountry }) => {
                 </p>
                 <WeatherIcon condition={day.day.condition.text} small />
                 <div className="temps">
-                  <TemperatureDisplay tempC={weather?.current?.temp_c} />
-                  <TemperatureDisplay tempC={weather?.current?.temp_c} />
+                <TemperatureDisplay tempC={day.day.maxtemp_c} />
+                <TemperatureDisplay tempC={day.day.mintemp_c} />
+
                 </div>
               </div>
             ))}

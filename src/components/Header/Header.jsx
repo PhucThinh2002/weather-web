@@ -16,21 +16,20 @@ const Header = ({ onSearch }) => {
   const [searchError, setSearchError] = useState(null);
   const [showTempSettings, setShowTempSettings] = useState(false);
   const { unit } = useSelector(state => state.temperature);
+  const lastQueryRef = useRef(""); // Thêm useRef để theo dõi query
+  const abortControllerRef = useRef(null); // Thêm AbortController
 
   const hasInvalidSpecialChars = (query) => {
     const invalidChars = /[@#$%^&*()_+=\[\]{};':"\\|<>\/]+/;
     return invalidChars.test(query);
   };
 
-  // Đóng suggestions và temperature settings khi click bên ngoài
   useEffect(() => {
     const handleClickOutside = (event) => {
-      // Đóng search suggestions nếu click bên ngoài
       if (searchRef.current && !searchRef.current.contains(event.target)) {
         setShowSuggestions(false);
       }
       
-      // Đóng temperature settings nếu click bên ngoài
       if (tempSettingsRef.current && !tempSettingsRef.current.contains(event.target)) {
         setShowTempSettings(false);
       }
@@ -43,68 +42,82 @@ const Header = ({ onSearch }) => {
   }, []);
 
   useEffect(() => {
-  const fetchSuggestions = async () => {
-    const query = searchInput.trim();
-    
-    // Kiểm tra ký tự đặc biệt trước khi gọi API
-    if (hasInvalidSpecialChars(query)) {
-      setSearchError("Tên địa điểm không được chứa ký tự đặc biệt (@, *, _, ...)");
-      setSearchResults([]);
-      return;
-    }
-    
-    if (query.length < 2) {
-      setSearchResults([]);
-      setSearchError(null); // Reset lỗi khi query quá ngắn
-      return;
-    }
-
-    setIsSearching(true);
-    setSearchError(null);
-    
-    try {
-      const results = await searchLocation(query);
+    const fetchSuggestions = async () => {
+      const query = searchInput.trim();
       
-      // Ưu tiên kết quả có tên trùng khớp hơn
-      const exactMatch = results.find(item => 
-        item.name.toLowerCase().includes(query.toLowerCase()) ||
-        item.region?.toLowerCase().includes(query.toLowerCase())
-      );
-      
-      if (exactMatch) {
-        setSearchResults([exactMatch, ...results.filter(item => item !== exactMatch)]);
-      } else {
-        setSearchResults(results);
+      // Kiểm tra query hợp lệ
+      if (hasInvalidSpecialChars(query)) {
+        setSearchError("Tên địa điểm không được chứa ký tự đặc biệt (@, *, _, ...)");
+        setSearchResults([]);
+        return;
       }
       
-      setShowSuggestions(true);
-    } catch (error) {
-      console.error("Error fetching suggestions:", error);
-      setSearchResults([]);
-      setSearchError(error.message || "Không thể tìm kiếm địa điểm");
-    } finally {
-      setIsSearching(false);
-    }
-  };
+      if (query.length < 2) {
+        setSearchResults([]);
+        setSearchError(null);
+        return;
+      }
 
-  const debounceTimer = setTimeout(() => {
-    fetchSuggestions();
-  }, 500);
+      // Hủy request trước nếu có
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
 
-  return () => clearTimeout(debounceTimer);
-}, [searchInput]);
+      // Tạo controller mới
+      abortControllerRef.current = new AbortController();
+      lastQueryRef.current = query; // Lưu query hiện tại
+      setIsSearching(true);
+      setSearchError(null);
+      
+      try {
+        const results = await searchLocation(query, { 
+          signal: abortControllerRef.current.signal 
+        });
+        
+        // Chỉ cập nhật nếu query vẫn khớp
+        if (query === lastQueryRef.current) {
+          const exactMatch = results.find(item => 
+            item.name.toLowerCase().includes(query.toLowerCase()) ||
+            item.region?.toLowerCase().includes(query.toLowerCase())
+          );
+          
+          setSearchResults(exactMatch 
+            ? [exactMatch, ...results.filter(item => item !== exactMatch)] 
+            : results
+          );
+          setShowSuggestions(true);
+        }
+      } catch (error) {
+        if (error.name !== 'AbortError' && query === lastQueryRef.current) {
+          console.error("Error fetching suggestions:", error);
+          setSearchResults([]);
+          setSearchError(error.message || "Không thể tìm kiếm địa điểm");
+        }
+      } finally {
+        if (query === lastQueryRef.current) {
+          setIsSearching(false);
+        }
+      }
+    };
+
+    const debounceTimer = setTimeout(fetchSuggestions, 500);
+    
+    return () => {
+      clearTimeout(debounceTimer);
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, [searchInput]);
 
   const handleWeatherSelection = async (location) => {
     try {
-      // Thử tìm kiếm chính xác hơn bằng cách kết hợp name và region
       const weatherData = await getWeatherData(location);
       
-      // Kiểm tra xem có phải là kết quả mong muốn không
       const isDesiredLocation = weatherData.location.name.toLowerCase().includes(searchInput.toLowerCase()) || 
                                weatherData.location.region?.toLowerCase().includes(searchInput.toLowerCase());
       
       if (!isDesiredLocation && searchResults.length > 1) {
-        // Thử với kết quả thứ 2 nếu kết quả đầu không khớp
         const secondTry = await getWeatherData(searchResults[1].name);
         if (secondTry.location.name.toLowerCase().includes(searchInput.toLowerCase())) {
           onSearch(searchResults[1].name);
@@ -147,13 +160,11 @@ const Header = ({ onSearch }) => {
     e.preventDefault();
     const query = searchInput.trim();
     
-    // Kiểm tra nếu search input rỗng
     if (!query) {
       setSearchError("Vui lòng nhập địa điểm cần tìm");
       return;
     }
   
-    // Kiểm tra ký tự đặc biệt
     if (hasInvalidSpecialChars(query)) {
       setSearchError("Tên địa điểm không được chứa ký tự đặc biệt (@, *, _, ...)");
       return;
@@ -203,6 +214,14 @@ const Header = ({ onSearch }) => {
       setSearchInput(""); 
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
 
   return (
     <section className="header-section">
